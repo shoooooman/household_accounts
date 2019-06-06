@@ -1,2 +1,14 @@
-# household_accounts
-This application is for freee summer internship 2019.
+# Android 家計簿アプリ
+
+### 実装した項目
+- 買ったものとその値段の追加
+- これまで買ったものの一覧の表示
+- 買ったものの情報の更新
+- 買ったものの削除
+- これまで買ったものの値段の合計の表示
+
+### 使用言語
+Kotlin
+
+### 実行環境
+ASUS ZenPad3 8.0 で動作確認済み
