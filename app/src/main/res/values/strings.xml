@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">Household Accounts</string>
+    <string name="add_button">ADD</string>
+    <string name="price_digit">%1$d円</string>
+</resources>
