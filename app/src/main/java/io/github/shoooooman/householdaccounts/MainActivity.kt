@@ -51,7 +51,7 @@ class MainActivity : AppCompatActivity() {
                     .setView(layout)
                     .setTitle("アイテム追加")
                     .setPositiveButton("決定") { _, _ ->
-                        if (editName!!.text != null && editPrice!!.text != null) {
+                        if (editName!!.text.isNotEmpty() && editPrice!!.text.isNotBlank()) {
                             // TODO: fix id
                             val newItem = Item(list.size.toLong(),
                                 editName!!.text.toString(), editPrice!!.text.toString().toInt())
