@@ -14,45 +14,66 @@ class MainActivity : AppCompatActivity() {
     private val tag = "MainActivity"
     private val list: MutableList<Item> = mutableListOf()
     private var itemAdapter: ItemAdapter? = null
-    private var dialog: AlertDialog? = null
+    private var addDialog: AlertDialog? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        val listView = findViewById<ListView>(R.id.item_list)
+        val inflater: LayoutInflater = LayoutInflater.from(this)
+        val dialogLayout: View = inflater.inflate (R.layout.dialog, null)
+
+        val listView: ListView = findViewById(R.id.item_list)
         itemAdapter = ItemAdapter(this@MainActivity, list)
         listView.adapter = itemAdapter
         listView.onItemClickListener =
                 AdapterView.OnItemClickListener { parent, view, pos, id ->
                     Log.d(tag, id.toString())
                     AlertDialog.Builder(this)
-                        .setMessage("削除してもいいですか？")
-                        .setPositiveButton("OK") { _, _ ->
+                        .setMessage("Menu")
+                        .setPositiveButton("編集") { _, _ ->
+                            val editDialogLayout: View = inflater.inflate (R.layout.dialog, null)
+                            val editName: EditText = editDialogLayout.findViewById(R.id.edit_name)
+                            val editPrice: EditText = editDialogLayout.findViewById(R.id.edit_price)
+                            editName!!.setText(list[pos].name)
+                            editPrice!!.setText(list[pos].price.toString())
+                            editPrice!!.inputType = TYPE_CLASS_NUMBER
+                            editName!!.requestFocus()
+                            val editDialog = AlertDialog.Builder(this)
+                                .setView(editDialogLayout)
+                                .setTitle("アイテム編集")
+                                .setPositiveButton("決定") { _, _ ->
+                                    if (editName!!.text.isNotEmpty() && editPrice!!.text.isNotEmpty()) {
+                                        list[pos].name = editName!!.text.toString()
+                                        list[pos].price = editPrice!!.text.toString().toInt()
+                                        itemAdapter!!.notifyDataSetChanged()
+                                    }
+                                }.create()
+                            editDialog!!.show()
+                        }
+                        .setNegativeButton("削除") { _, _ ->
                             list.removeAt(pos)
                             itemAdapter!!.notifyDataSetChanged()
-                        }.setNegativeButton("キャンセル", null)
+                        }
+                        .setNeutralButton("キャンセル", null)
                         .show();
                 }
 
-        val inflater: LayoutInflater = LayoutInflater.from(this)
-        val layout: View = inflater.inflate (R.layout.dialog, null)
 
         val addButton = findViewById<Button>(R.id.add_button)
         addButton.setOnClickListener {
-            val editName: EditText = layout.findViewById(R.id.edit_name)
-            val editPrice: EditText = layout.findViewById(R.id.edit_price)
+            val editName: EditText = dialogLayout.findViewById(R.id.edit_name)
+            val editPrice: EditText = dialogLayout.findViewById(R.id.edit_price)
             editName!!.text = null
             editPrice!!.text = null
             editName!!.requestFocus()
-            if (dialog == null) {
+            if (addDialog == null) {
                 editPrice!!.inputType = TYPE_CLASS_NUMBER
-                dialog = AlertDialog.Builder(this)
-                    .setView(layout)
+                addDialog = AlertDialog.Builder(this)
+                    .setView(dialogLayout)
                     .setTitle("アイテム追加")
                     .setPositiveButton("決定") { _, _ ->
-                        if (editName!!.text.isNotEmpty() && editPrice!!.text.isNotBlank()) {
-                            // TODO: fix id
+                        if (editName!!.text.isNotEmpty() && editPrice!!.text.isNotEmpty()) {
                             val newItem = Item(list.size.toLong(),
                                 editName!!.text.toString(), editPrice!!.text.toString().toInt())
                             itemAdapter!!.add(newItem)
@@ -60,7 +81,7 @@ class MainActivity : AppCompatActivity() {
                         }
                     }.create()
             }
-            dialog!!.show()
+            addDialog!!.show()
         }
     }
 }
