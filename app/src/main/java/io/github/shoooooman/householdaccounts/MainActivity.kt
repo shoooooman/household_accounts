@@ -25,7 +25,14 @@ class MainActivity : AppCompatActivity() {
         listView.adapter = itemAdapter
         listView.onItemClickListener =
                 AdapterView.OnItemClickListener { parent, view, pos, id ->
-                   Log.d(tag, id.toString())
+                    Log.d(tag, id.toString())
+                    AlertDialog.Builder(this)
+                        .setMessage("削除してもいいですか？")
+                        .setPositiveButton("OK") { _, _ ->
+                            list.removeAt(pos)
+                            itemAdapter!!.notifyDataSetChanged()
+                        }.setNegativeButton("キャンセル", null)
+                        .show();
                 }
 
         val inflater: LayoutInflater = LayoutInflater.from(this)
