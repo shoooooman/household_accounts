@@ -25,4 +25,8 @@ class ItemAdapter(context: Context, list: List<Item>) : ArrayAdapter<Item>(conte
         return view!!
     }
 
+    override fun isEnabled(position: Int): Boolean {
+        return position != 0
+    }
+
 }

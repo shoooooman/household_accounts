@@ -25,10 +25,11 @@ class MainActivity : AppCompatActivity() {
 
         val listView: ListView = findViewById(R.id.item_list)
         itemAdapter = ItemAdapter(this@MainActivity, list)
+        itemAdapter!!.add(Item(0, "合計", list.sumBy { it.price }))
+        itemAdapter!!.notifyDataSetChanged()
         listView.adapter = itemAdapter
         listView.onItemClickListener =
                 AdapterView.OnItemClickListener { parent, view, pos, id ->
-                    Log.d(tag, id.toString())
                     AlertDialog.Builder(this)
                         .setMessage("Menu")
                         .setPositiveButton("編集") { _, _ ->
@@ -44,14 +45,17 @@ class MainActivity : AppCompatActivity() {
                                 .setTitle("アイテム編集")
                                 .setPositiveButton("決定") { _, _ ->
                                     if (editName!!.text.isNotEmpty() && editPrice!!.text.isNotEmpty()) {
+                                        val tmp = list[pos].price
                                         list[pos].name = editName!!.text.toString()
                                         list[pos].price = editPrice!!.text.toString().toInt()
+                                        list[0].price += list[pos].price - tmp
                                         itemAdapter!!.notifyDataSetChanged()
                                     }
                                 }.create()
                             editDialog!!.show()
                         }
                         .setNegativeButton("削除") { _, _ ->
+                            list[0].price -= list[pos].price
                             list.removeAt(pos)
                             itemAdapter!!.notifyDataSetChanged()
                         }
@@ -77,6 +81,7 @@ class MainActivity : AppCompatActivity() {
                             val newItem = Item(list.size.toLong(),
                                 editName!!.text.toString(), editPrice!!.text.toString().toInt())
                             itemAdapter!!.add(newItem)
+                            list[0].price += newItem.price
                             itemAdapter!!.notifyDataSetChanged()
                         }
                     }.create()
